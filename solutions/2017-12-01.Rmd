@@ -19,6 +19,8 @@ data <- c("659282248893133858981552542523681828522955561639292843326243684738654
 
 # Solution
 
+## Part 1
+
 __Split the data into a single digit vector__
 ```{r}
 digits <- data %>% str_split("")
@@ -53,9 +55,31 @@ puzzle %>%
   summarise(sum_of_matches = sum(digits))
 ```
 
-# YAY Correct!
+### YAY Correct! `r emo::ji("clinking_glasses")`
+
+## Part 2
 
 ```{r}
-emo::ji("clinking_glasses")
+first_half <- puzzle %>%
+  slice(1:(nrow(puzzle) / 2)) %>%
+  select(-match) %>%
+  rename(
+    first_index = index,
+    first_digits = digits)
+
+second_half <- puzzle %>%
+  slice(((nrow(puzzle) / 2) + 1):nrow(puzzle)) %>%
+  select(-match) %>%
+  rename(
+    second_index = index,
+    second_digits = digits)
+```
+
+```{r}
+first_half %>% bind_cols(second_half) %>%
+  mutate(match = if_else(first_digits == second_digits, "Match", "No Match")) %>%
+  filter(match == "Match") %>%
+  mutate(total = first_digits + second_digits) %>%
+  summarise(sum = sum(total))
 ```
 
